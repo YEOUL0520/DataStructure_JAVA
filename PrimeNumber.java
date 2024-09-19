@@ -4,13 +4,14 @@
  * 프로그램의 목적 및 기본 기능:
  *   - 입력받은 문자열의 부분 문자열로 만들 수 있는 모든 소수 출력
  * 프로그램 작성자: 류효정 (2024년 09월 12일)
- * 최종 수정 및 보완: 류효정 (2024년 09월 14일)
+ * 최종 수정 및 보완: 류효정 (2024년 09월 20일)
  * =================================================================================================
  * 프로그램 수정/보완 이력
  * =================================================================================================
  * 프로그램 수정/보완작업자        일자                수정/보완 내용
  * 류효정                    2024.09.12         파일 입력 및 출력 완료
  * 류효정                    2024.09.14         출력 방식 변화 (소수 개수 출력 추가)
+ * 류효정                    2024.09.20         강의자료의 permutation 이용한 구현
  * =================================================================================================
  */
 
@@ -21,17 +22,30 @@ public class PrimeNumber {
 
     int count = 0;
     HashSet<Integer> subset = new HashSet<>();
-    Iterator<Integer> sub = subset.iterator();
     List<Integer> sortedSubset = new ArrayList<Integer>();
 
-    //입력받은 문자열으로 생성 가능한 모든 숫자 부분집합(permutation)을 재귀함수를 통해 구성하고 subset에 저장함
-    public void selectSubset (String use, String unuse){
-        if (!use.isEmpty()){
-            subset.add(Integer.valueOf(use)); //subset을 HashSet으로 생성해 중복 제거 (HashSet의 경우 HashMap과 달리 입력받은 값을 key로 받으므로 값 자체 중복 불가)
+    //Permutation 함수를 사용한 구현, swap을 사용하는 것이 공간적인 측면서 보다 효율적이라 판단됨.
+    public void Permutation(char[] A, int k){
+        String perm  = "";
+
+        if(k== A.length -1){
+            for(int i = 0; i < A.length; i++)
+            {
+                perm += A[i];
+                subset.add(Integer.valueOf(perm));
+            }
+
         }
-        for (int i =0; i<unuse.length(); i++)
-            selectSubset(use+unuse.charAt(i), unuse.substring(0,i)+unuse.substring(i+1));
+        else{
+            for (int i = k; i < A.length; i++){
+                swap(A, i, k);
+                Permutation(A, k+1);
+                swap(A, i, k);
+            }
+        }
     }
+
+    private void swap(char[] A, int i, int k){ char temp = A[k]; A[k] = A[i]; A[i] = temp; }
 
     public void findPrimeInSubset (HashSet<Integer> subset){
         for (int number : subset) {
@@ -71,7 +85,10 @@ public class PrimeNumber {
         String numbers = scanner.nextLine();
         scanner.close();
 
-        driver.selectSubset("",numbers);
+        char[] numberC = numbers.toCharArray();
+
+        //driver.selectSubset("",numbers);
+        driver.Permutation(numberC, 0);
         driver.findPrimeInSubset(driver.subset);
 
         System.out.println("Primes: " + driver.count + "개 " + driver.sortedSubset);
