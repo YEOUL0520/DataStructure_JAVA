@@ -87,7 +87,6 @@ public class PrimeNumber {
 
         char[] numberC = numbers.toCharArray();
 
-        //driver.selectSubset("",numbers);
         driver.Permutation(numberC, 0);
         driver.findPrimeInSubset(driver.subset);
 
